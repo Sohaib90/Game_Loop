@@ -6,6 +6,9 @@
 int game_is_running = FALSE;
 SDL_Window* window = NULL; // because we want to access in the main as well
 SDL_Renderer* renderer = NULL;
+
+int last_frame_time = 0;
+
 struct ball
 {
     float x;
@@ -71,10 +74,21 @@ void process_input(){
 }
 
 void update(){
+
+    // lock and release when we get frame time.
+    while(!SDL_TICKS_PASSED(SDL_GetTicks(), last_frame_time + FRAME_TARGET_TIME));
+
+    // calculate delta time
+    // delta time: is the amount elapsed since the last frame
+    float delta_time = (SDL_GetTicks() - last_frame_time) / 1000.0f;
+
+    // logic to keep a fixed timestep 
+    last_frame_time = SDL_GetTicks(); // As soon as we initialize the init window
+
     // move the objects
     // incrementing the position by adding one pixel
-    ball.x += 1;
-    ball.y += 1;
+    ball.x += 30 * delta_time;
+    ball.y += 20 * delta_time;
 }
 
 void setup(){
