@@ -76,7 +76,11 @@ void process_input(){
 void update(){
 
     // lock and release when we get frame time.
-    while(!SDL_TICKS_PASSED(SDL_GetTicks(), last_frame_time + FRAME_TARGET_TIME));
+    // while(!SDL_TICKS_PASSED(SDL_GetTicks(), last_frame_time + FRAME_TARGET_TIME));
+    int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - last_frame_time);
+
+    if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME)
+        SDL_Delay(time_to_wait);
 
     // calculate delta time
     // delta time: is the amount elapsed since the last frame
