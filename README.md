@@ -19,4 +19,4 @@ Learning game loops course by Pikuma
 6. git clone the repo.
 7. cd to the repo
 8. make build
-9. mkae run and play
+9. make run and play
