@@ -89,6 +89,7 @@ void update(){
     // while(!SDL_TICKS_PASSED(SDL_GetTicks(), last_frame_time + FRAME_TARGET_TIME));
     int time_to_wait = FRAME_TARGET_TIME - (SDL_GetTicks() - last_frame_time);
 
+    // Wait is not necessary when the delta time is being used
     if (time_to_wait > 0 && time_to_wait <= FRAME_TARGET_TIME)
         SDL_Delay(time_to_wait);
 
@@ -103,36 +104,37 @@ void update(){
     // incrementing the position by adding one pixel
     ball.x += ball.vel_x * delta_time;
     ball.y += ball.vel_y * delta_time;
-
-    // TODO: Update the paddle position based on its velocity
+    // Update the paddle position based on its velocity
     paddle.x += paddle.vel_x * delta_time;
 
-    // TODO: Check for ball collision with the walls
-    if (ball.x < PADDLE_BORDER_LIMIT || ball.x + ball.width >= WINDOW_WIDTH){
+    // Check for ball collision with the walls
+    if (ball.x < PADDLE_BORDER_LIMIT || ball.x + ball.width >= WINDOW_WIDTH)
         ball.vel_x =  -ball.vel_x;
-    }
-    else if (ball.y + ball.height >= WINDOW_HEIGHT){
+    if (ball.y < PADDLE_BORDER_LIMIT)
         ball.vel_y = -ball.vel_y;
-    }
-    else if (ball.y < 0) {
-        // TODO: game over if no collision with paddle
-        ball.vel_y = -ball.vel_y;
-    }
-    // TODO: Check the ball collision with the paddle
-    
 
+    // Check the ball collision with the paddle
+    if ((ball.x >= paddle.x) && 
+        (ball.y + ball.height >= paddle.y - PADDLE_BORDER_LIMIT) &&
+        (ball.x + ball.width <= paddle.x + paddle.width)){
+            ball.vel_y = -ball.vel_y;
+        }
+    
     // TODO: Prevent paddle from moving outside the boundaries
-    if (paddle.x < PADDLE_BORDER_LIMIT){
+    if (paddle.x < PADDLE_BORDER_LIMIT)
         paddle.x = PADDLE_BORDER_LIMIT;
-        paddle.vel_x = 0;
-    }
-    else if (paddle.x + paddle.width >= WINDOW_WIDTH)
-    {
+    if (paddle.x + paddle.width >= WINDOW_WIDTH)
         paddle.x = WINDOW_WIDTH - paddle.width;
-        paddle.vel_x = 0;
-    }
     
     // TODO: Check for game over wen the ball hits the bottom part of the screen
+    if (ball.y + ball.height >= WINDOW_HEIGHT - PADDLE_BORDER_LIMIT) {
+        // TODO: game over if no collision with paddle
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,
+                                "Game Over",
+                                "The ball escaped the paddle and hence the game is lost.",
+                                window);
+        game_is_running = FALSE;
+    }
 }
 
 void setup(){
@@ -141,8 +143,8 @@ void setup(){
     ball.y = 20;
     ball.width = 15;
     ball.height = 15;
-    ball.vel_x = 200;
-    ball.vel_y = 80;
+    ball.vel_x = 250;
+    ball.vel_y = 100;
 
     // Paddle
     paddle.width = 100;

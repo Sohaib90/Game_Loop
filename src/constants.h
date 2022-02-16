@@ -16,6 +16,6 @@
 
 // PADDLE variables
 #define PADDLE_BORDER_LIMIT 5
-#define PADDLE_VEL 50
+#define PADDLE_VEL 200
 
 #endif
